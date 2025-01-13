@@ -1,0 +1,1526 @@
+#include <limits.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdarg.h>
+#include <float.h>
+#include "s21_string.h"
+
+#test strlenTest
+ck_assert_int_eq(strlen("Hello"), s21_strlen("hello"));
+ck_assert_int_eq(strlen("\0"), s21_strlen("\0"));
+ck_assert_int_eq(strlen("\n"), s21_strlen("\n"));
+
+#test strlenTest_1
+char str1[20] = "Hello, my friend";
+char str2[20] = "Hello, my love!!";
+ck_assert_int_eq(strlen(str1), s21_strlen(str2));
+
+#test strlenTest_2
+char str1[5] = "\0";
+ck_assert_int_eq(strlen(str1), s21_strlen(str1));
+
+#test strlenTest_3
+char str1[5] = "\n";
+ck_assert_int_eq(strlen(str1), s21_strlen(str1));
+
+#test strlenTest_4
+char str1[5] = "";
+ck_assert_int_eq(strlen(str1), s21_strlen(str1));
+
+#test strcspnTest_1
+char str1[10] = "123456789";
+char str2[10] = "9876";
+ck_assert_int_eq(strcspn(str1, str2), s21_strcspn(str1, str2));
+
+#test strcspnTest_2
+char str1[15] = "hello\0bye";
+char str2[15] = "\0";
+ck_assert_int_eq(strcspn(str1, str2), s21_strcspn(str1, str2));
+
+#test strcspnTest_3
+char str1[10] = "\0";
+char str2[10] = "hello\0";
+ck_assert_int_eq(strcspn(str1, str2), s21_strcspn(str1, str2));
+
+#test strcspnTest_4
+char str1[10] = "holi\nday";
+char str2[10] = "a";
+ck_assert_int_eq(strcspn(str1, str2), s21_strcspn(str1, str2));
+
+#test strcspnTest_5
+char str1[5] = "\1";
+char str2[5] = "\n";
+ck_assert_int_eq(strcspn(str1, str2), s21_strcspn(str1, str2));
+
+#test strpbrkTest_1
+char str1[5] = "Love";
+char str2[5] = "l";
+ck_assert_ptr_eq(strpbrk(str1, str2), s21_strpbrk(str1, str2));
+
+#test strpbrkTest_2
+char str1[10] = "PLEASe";
+char str2[10] = "please";
+ck_assert_ptr_eq(strpbrk(str1, str2), s21_strpbrk(str1, str2));
+
+#test strpbrkTest_3
+char str1[10] = "123456789";
+char str2[10] = "9876";
+ck_assert_ptr_eq(strpbrk(str1, str2), s21_strpbrk(str1, str2));
+
+#test strpbrkTest_4
+char str1[10] = "123\0bye";
+char str2[10] = "bye\0";
+ck_assert_ptr_eq(strpbrk(str1, str2), s21_strpbrk(str1, str2));
+
+#test strpbrkTest_5
+char str1[5] = "";
+char str2[5] = "";
+ck_assert_ptr_eq(strpbrk(str1, str2), s21_strpbrk(str1, str2));
+
+#test strpbrkTest_6
+char str1[10] = "Please";
+char str2[10] = "a";
+ck_assert_ptr_eq(strpbrk(str1, str2), s21_strpbrk(str1, str2));
+
+#test strerrorTest_1
+for (int i = -1000; i < 1000; i++) {
+    ck_assert_str_eq(strerror(i), s21_strerror(i));
+}
+
+#test memchrTest_1 
+char str1[25] = "Hello, my name is Jenny";
+ck_assert_ptr_eq(memchr(str1, '\0', 6), s21_memchr(str1, '\0', 6));
+
+#test memchrTest_2
+char str1[25] = "Hello, my name is Jenny";
+ck_assert_ptr_eq(memchr(str1, 'l', 6), s21_memchr(str1, 'l', 6));
+
+#test memchrTest_3
+char str1[10] = "Hello";
+ck_assert_ptr_eq(memchr(str1, '\0', 6), s21_memchr(str1, '\0', 6));
+
+#test memchrTest_4
+char str1[10] = "Hello";
+ck_assert_ptr_eq(memchr(str1, 'm', 6), s21_memchr(str1, 'm', 6));
+
+#test memchrTest_5
+char str1[10] = " ";
+ck_assert_ptr_eq(memchr(str1, ' ', 6), s21_memchr(str1, ' ', 6));
+
+#test memcmpTest_1
+char str1[7] = "A";
+char str2[7] = "a";
+int result_1 = 0;
+int result_2 = 0;
+if (memcmp(str1, str2, 6) < 0) result_1 = -1;
+if (memcmp(str1, str2, 6) > 0) result_1 = 1;
+if (s21_memcmp(str1, str2, 6) < 0) result_2 = -1;
+if (s21_memcmp(str1, str2, 6) > 0) result_2 = 1;
+ck_assert_int_eq(result_1, result_2);
+
+#test memcmpTest_2
+char str1[5] = "AAA";
+char str2[5] = "aaa";
+ck_assert_int_eq(memcmp(str1, str2, 0), s21_memcmp(str1, str2, 0));
+
+#test memcmpTest_3
+char str1[5] = "\0";
+char str2[5] = "";
+ck_assert_int_eq(memcmp(str1, str2, 2), s21_memcmp(str1, str2, 2));
+
+#test memcmpTest_4
+char str1[10] = "Hellooo";
+char str2[10] = "Hello";
+ck_assert_int_eq(memcmp(str1, str2, 3), s21_memcmp(str1, str2, 3));
+
+#test memcmpTest_5
+char str1[10] = "Hellooo";
+char str2[10] = "Hello";
+int result_1 = 0;
+int result_2 = 0;
+if (memcmp(str1, str2, 6) < 0) result_1 = -1;
+if (memcmp(str1, str2, 6) > 0) result_1 = 1;
+if (s21_memcmp(str1, str2, 6) < 0) result_2 = -1;
+if (s21_memcmp(str1, str2, 6) > 0) result_2 = 1;
+ck_assert_int_eq(result_1, result_2);
+
+#test memcpyTest_1
+char str1[20] = "When I was young...";
+char str2[20] = "If  ";
+ck_assert_str_eq(memcpy(str1, str2, 4), s21_memcpy(str1, str2, 4));
+
+#test memcpyTest_2
+char str1[20] = "When I was young...";
+char str2[20] = "If  ";
+ck_assert_str_eq(memcpy(str1, str2, 10), s21_memcpy(str1, str2, 10));
+
+#test memcpyTest_3
+char str1[20] = "When I was young...";
+char str2[20] = "\0";
+ck_assert_ptr_eq(memcpy(str1, str2, 10), s21_memcpy(str1, str2, 10));
+
+#test memcpyTest_4
+char str1[20] = "";
+char str2[20] = "Love";
+ck_assert_str_eq(memcpy(str1, str2, 3), s21_memcpy(str1, str2, 3));
+
+#test memmoveTest_1
+char str1[10] = "\0";
+char str2[10] = "Hello";
+ck_assert_ptr_eq(memmove(str1, str2, 7), s21_memmove(str1, str2, 7));
+
+#test memmoveTest_2
+char str1[20] = "Where am I?";
+ck_assert_ptr_eq(memmove(&str1[6], &str1[3], 7), s21_memmove(&str1[6], &str1[3], 7));
+
+#test memmoveTest_3
+char str1[10] = "Happiness";
+char str2[10] = "";
+ck_assert_ptr_eq(memmove(str1, str2, 7), s21_memmove(str1, str2, 7));
+
+#test memmoveTest_4
+char str1[10] = "Hello";
+char str2[10] = "\n";
+ck_assert_ptr_eq(memmove(str1, str2, 1), s21_memmove(str1, str2, 1));
+
+#test strcmpTest_1
+char str1[10] = "School21";
+char str2[10] = "\n";
+int result_1 = 0;
+int result_2 = 0;
+if (strcmp(str1, str2) < 0) result_1 = -1;
+if (strcmp(str1, str2) > 0) result_1 = 1;
+if (s21_strcmp(str1, str2) < 0) result_2 = -1;
+if (s21_strcmp(str1, str2) > 0) result_2 = 1;
+ck_assert_int_eq(result_1, result_2);
+
+#test strcmpTest_2
+char str1[10] = "";
+char str2[10] = " ";
+int result_1 = 0;
+int result_2 = 0;
+if (strcmp(str1, str2) < 0) result_1 = -1;
+if (strcmp(str1, str2) > 0) result_1 = 1;
+if (s21_strcmp(str1, str2) < 0) result_2 = -1;
+if (s21_strcmp(str1, str2) > 0) result_2 = 1;
+ck_assert_int_eq(result_1, result_2);
+
+#test strcmpTest_3
+char str1[10] = "Bye";
+char str2[10] = "Bye\0bye";
+ck_assert_int_eq(strcmp(str1, str2), s21_strcmp(str1, str2));
+
+#test strcmpTest_4
+char str1[10] = "Hello";
+char str2[10] = "hELLO";
+int result_1 = 0;
+int result_2 = 0;
+if (strcmp(str1, str2) < 0) result_1 = -1;
+if (strcmp(str1, str2) > 0) result_1 = 1;
+if (s21_strcmp(str1, str2) < 0) result_2 = -1;
+if (s21_strcmp(str1, str2) > 0) result_2 = 1;
+ck_assert_int_eq(result_1, result_2);
+
+#test strncmpTest_1
+char str1[10] = "School21";
+char str2[10] = "School42";
+int result_1 = 0;
+int result_2 = 0;
+if (strncmp(str1, str2, 10) < 0) result_1 = -1;
+if (strncmp(str1, str2, 10) > 0) result_1 = 1;
+if (s21_strncmp(str1, str2, 10) < 0) result_2 = -1;
+if (s21_strncmp(str1, str2, 10) > 0) result_2 = 1;
+ck_assert_int_eq(result_1, result_2);
+
+#test strncmpTest_2
+char str1[10] = "   ";
+char str2[10] = "\0";
+ck_assert_int_eq(strncmp(str1, str2, 1), s21_strncmp(str1, str2, 1));
+
+#test strncmpTest_3
+char str1[10] = "Bye";
+char str2[10] = "Bye\0bye";
+ck_assert_int_eq(strncmp(str1, str2, 4), s21_strncmp(str1, str2, 4));
+
+#test strncmpTest_4
+char str1[10] = "Hello";
+char str2[10] = "hELLO";
+ck_assert_int_eq(strncmp(str1, str2, 0), s21_strncmp(str1, str2, 0));
+
+#test strcpyTest_1
+char str1[20] = "How are you?";
+char str2[20] = "I'm fine";
+char str3[20] = "How are you?";
+char str4[20] = "I'm fine";
+ck_assert_str_eq(strcpy(str1, str2), s21_strcpy(str3, str4));
+
+#test strcpyTest_2
+char str1[10] = "\0";
+char str2[10] = "\0Hello";
+char str3[10] = "\0";
+char str4[10] = "\0Hello";
+ck_assert_str_eq(strcpy(str1, str2), s21_strcpy(str3, str4));
+
+#test strcpyTest_3
+char str1[10] = "";
+char str2[10] = "bye\0bye";
+char str3[10] = "";
+char str4[10] = "bye\0bye";
+ck_assert_str_eq(strcpy(str1, str2), s21_strcpy(str3, str4));
+
+#test strcpyTest_4
+char str1[10] = "\0";
+char str2[10] = "\0";
+char str3[10] = "\0";
+char str4[10] = "\0";
+ck_assert_str_eq(strcpy(str1, str2), s21_strcpy(str3, str4));
+
+#test strncpyTest_1
+char str1[20] = "Abcd";
+char str2[20] = "EFGHYJ";
+char str3[20] = "Abcd";
+char str4[20] = "EFGHYJ";
+ck_assert_str_eq(strncpy(str1, str2, 3), s21_strncpy(str3, str4, 3));
+
+#test strncpyTest_2
+char str1[20] = "what's up";
+char str2[20] = "\0";
+char str3[20] = "what's up";
+char str4[20] = "\0";
+ck_assert_str_eq(strncpy(str1, str2, 3), s21_strncpy(str3, str4, 3));
+
+#test strncpyTest_3
+char str1[20] = " ";
+char str2[20] = " ";
+char str3[20] = " ";
+char str4[20] = " ";
+ck_assert_str_eq(strncpy(str1, str2, 1), s21_strncpy(str3, str4, 1));
+
+#test strncpyTest_4
+char str1[20] = "Hello";
+char str2[20] = "Goodbye";
+char str3[20] = "Hello";
+char str4[20] = "Goodbye";
+ck_assert_str_eq(strncpy(str1, str2, 4), s21_strncpy(str3, str4, 4));
+
+#test strncpyTest_5
+char str1[20] = "Hello";
+char str2[20] = "Goodbye";
+char str3[20] = "Hello";
+char str4[20] = "Goodbye";
+ck_assert_str_eq(strncpy(str1, str2, 20), s21_strncpy(str3, str4, 20));
+
+#test strchrTest_1
+char str[50] = "It has a been a long and challenging project";
+char str1[50] = "It has a been a long and challenging project";
+ck_assert_ptr_eq(strchr(str, 66), s21_strchr(str1, 66));
+
+#test strchrTest_2
+char str[50] = "It has a been a long and challenging project";
+char str1[50] = "It has a been a long and challenging project";
+ck_assert_str_eq(strchr(str, 'b'), s21_strchr(str1, 'b'));
+
+#test strchrTest_3
+char str[50] = "It has a been a long and challenging project";
+char str1[50] = "It has a been a long and challenging project";
+ck_assert_str_eq(strchr(str, ' '), s21_strchr(str1, ' '));
+
+#test strchrTest_4
+char str[50] = "It has a been a long and challenging project";
+char str1[50] = "It has a been a long and challenging project";
+ck_assert_ptr_eq(strchr(str, 'y'), s21_strchr(str1, 'y'));
+
+#test strchrTest_5
+char str[50] = "It has a been a long and challenging project";
+char str1[50] = "It has a been a long and challenging project";
+ck_assert_str_eq(strchr(str, '\0'), s21_strchr(str1, '\0'));
+
+#test strchrTest_6
+char str[50] = "It has a been a long and challenging project";
+char str1[50] = "It has a been a long and challenging project";
+ck_assert_str_eq(strchr(str, 98), s21_strchr(str1, 98));
+
+#test memsetTest_1
+char str1[15] = "00000";
+char str2[15] = "00000";
+ck_assert_str_eq(memset(str1, '1', 10), s21_memset(str2, '1', 10));
+
+#test memsetTest_2
+char str1[15] = "00000";
+char str2[15] = "00000";
+ck_assert_str_eq(memset(str1, '1', 1), s21_memset(str2, '1', 1));
+
+#test memsetTest_3
+char str1[10] = "";
+char str2[10] = "";
+ck_assert_str_eq(memset(str1, '\n', 5), s21_memset(str2, '\n', 5));
+
+#test strcatTest_1
+char str1[20] = "Hello,";
+char str2[20] = " how are you?";
+char str3[20] = "Hello,";
+char str4[20] = " how are you?";
+ck_assert_str_eq(strcat(str1, str2), s21_strcat(str3, str4));
+
+#test strcatTest_2
+char str1[20] = "";
+char str2[20] = " how are you?";
+char str3[20] = "";
+char str4[20] = " how are you?";
+ck_assert_str_eq(strcat(str1, str2), s21_strcat(str3, str4));
+
+#test strcatTest_3
+char str1[20] = "\0";
+char str2[20] = " how are you?";
+char str3[20] = "\0";
+char str4[20] = " how are you?";
+ck_assert_str_eq(strcat(str1, str2), s21_strcat(str3, str4));
+
+#test strncatTest_1
+char str1[30] = "Hello,";
+char str2[20] = " how are you?";
+char str3[30] = "Hello,";
+char str4[20] = " how are you?";
+ck_assert_str_eq(strncat(str1, str2, 20), s21_strncat(str3, str4, 20));
+
+#test strncatTest_2
+char str1[30] = "Hello,";
+char str2[20] = " how are you?";
+char str3[30] = "Hello,";
+char str4[20] = " how are you?";
+ck_assert_str_eq(strncat(str1, str2, 0), s21_strncat(str3, str4, 0));
+
+#test strncatTest_3
+char str1[30] = "Hello,";
+char str2[20] = "\0";
+char str3[30] = "Hello,";
+char str4[20] = "\0";
+ck_assert_str_eq(strncat(str1, str2, 10), s21_strncat(str3, str4, 10));
+
+#test strncatTest_4
+char str1[30] = "";
+char str2[20] = "";
+char str3[30] = "";
+char str4[20] = "";
+ck_assert_str_eq(strncat(str1, str2, 1), s21_strncat(str3, str4, 1));
+
+#test strrchrTest_1
+char str1[50] = "When I was young and cheerful";
+ck_assert_str_eq(strrchr(str1, 32), s21_strrchr(str1, 32));
+
+#test strrchrTest_2
+char str1[50] = "When I was young and cheerful";
+ck_assert_str_eq(strrchr(str1, 'e'), s21_strrchr(str1, 'e'));
+
+#test strrchrTest_3
+char str1[50] = "When I was young and \0cheerful";
+ck_assert_ptr_eq(strrchr(str1, 'l'), s21_strrchr(str1, 'l'));
+
+#test strrchrTest_4
+char str1[50] = "When I was young and \0cheerful";
+ck_assert_str_eq(strrchr(str1, 'I'), s21_strrchr(str1, 'I'));
+
+#test strrchrTest_5
+char str1[50] = "When I was young and cheerful";
+ck_assert_str_eq(strrchr(str1, '\0'), s21_strrchr(str1, '\0'));
+
+#test strrchrTest_6
+char str1[50] = "";
+ck_assert_str_eq(strrchr(str1, '\0'), s21_strrchr(str1, '\0'));
+
+#test strspnTest_1
+char str1[50] = "1 2 3 4 5 6 7 8 9";
+char str2[50] = "4321 ";
+ck_assert_int_eq(strspn(str1, str2), s21_strspn(str1, str2));
+
+#test strspnTest_2
+char str1[50] = "1 2 3 4 5 6 7 8 9";
+char str2[50] = "";
+ck_assert_int_eq(strspn(str1, str2), s21_strspn(str1, str2));
+
+#test strspnTest_3
+char str1[50] = "Hello";
+char str2[50] = "elH";
+ck_assert_int_eq(strspn(str1, str2), s21_strspn(str1, str2));
+
+#test strspnTest_4
+char str1[50] = "\0";
+char str2[50] = "Hello";
+ck_assert_int_eq(strspn(str1, str2), s21_strspn(str1, str2));
+
+#test strstrTest_1
+char str1[10] = "\0";
+char str2[10] = "Hello";
+ck_assert_ptr_eq(strstr(str1, str2), s21_strstr(str1, str2));
+
+#test strstrTest_2
+char str1[50] = "When I was young and cheerful";
+char str2[10] = " I ";
+ck_assert_str_eq(strstr(str1, str2), s21_strstr(str1, str2));
+
+#test strstrTest_3
+char str1[50] = "When I was young\0 and cheerful";
+char str2[10] = "and";
+ck_assert_ptr_eq(strstr(str1, str2), s21_strstr(str1, str2));
+
+#test strtokTest_1
+char str1[50] = "   When I was young and cheerful";
+char delim1[10] = " ";
+char str2[50] = "   When I was young and cheerful";
+char delim2[10] = " ";
+char *token_1;
+char *token_2;
+token_1 = strtok(str1, delim1);
+token_2 = s21_strtok(str2, delim2);
+if (token_1 == s21_NULL) {
+    ck_assert_ptr_eq(token_1, token_2);
+} else {
+    ck_assert_str_eq(token_1, token_2);
+    while (token_1 != s21_NULL) {
+        token_1 = strtok(s21_NULL, delim1);
+        token_2 = s21_strtok(s21_NULL, delim2);
+        if (token_1 == s21_NULL) {
+            ck_assert_ptr_eq(token_1, token_2);
+        } else {
+            ck_assert_str_eq(token_1, token_2);
+        }
+    }
+}
+
+#test strtokTest_2
+char str1[50] = "Vector";
+char delim1[50] = "When I was young and cheerful";
+char str2[50] = "Vector";
+char delim2[50] = "When I was young and cheerful";
+char *token_1;
+char *token_2;
+token_1 = strtok(str1, delim1);
+token_2 = s21_strtok(str2, delim2);
+if (token_1 == s21_NULL) {
+    ck_assert_ptr_eq(token_1, token_2);
+} else {
+    ck_assert_str_eq(token_1, token_2);
+    while (token_1 != s21_NULL) {
+        token_1 = strtok(s21_NULL, delim1);
+        token_2 = s21_strtok(s21_NULL, delim2);
+        if (token_1 == s21_NULL) {
+            ck_assert_ptr_eq(token_1, token_2);
+        } else {
+            ck_assert_str_eq(token_1, token_2);
+        }
+    }
+}
+
+#test strtokTest_3
+char str1[50] = "\0";
+char delim1[10] = "When I was";
+char str2[50] = "\0";
+char delim2[10] = "When I was";
+char *token_1;
+char *token_2;
+token_1 = strtok(str1, delim1);
+token_2 = s21_strtok(str2, delim2);
+if (token_1 == s21_NULL) {
+    ck_assert_ptr_eq(token_1, token_2);
+} else {
+    ck_assert_str_eq(token_1, token_2);
+    while (token_1 != s21_NULL) {
+        token_1 = strtok(s21_NULL, delim1);
+        token_2 = s21_strtok(s21_NULL, delim2);
+        if (token_1 == s21_NULL) {
+            ck_assert_ptr_eq(token_1, token_2);
+        } else {
+            ck_assert_str_eq(token_1, token_2);
+        }
+    }
+}
+
+#test strtokTest_4
+char str1[50] = "When I was young and cheerful";
+char delim1[10] = "";
+char str2[50] = "When I was young and cheerful";
+char delim2[10] = "";
+char *token_1;
+char *token_2;
+token_1 = strtok(str1, delim1);
+token_2 = s21_strtok(str2, delim2);
+if (token_1 == s21_NULL) {
+    ck_assert_ptr_eq(token_1, token_2);
+} else {
+    ck_assert_str_eq(token_1, token_2);
+    while (token_1 != s21_NULL) {
+        token_1 = strtok(s21_NULL, delim1);
+        token_2 = s21_strtok(s21_NULL, delim2);
+        if (token_1 == s21_NULL) {
+            ck_assert_ptr_eq(token_1, token_2);
+        } else {
+            ck_assert_str_eq(token_1, token_2);
+        }
+    }
+}
+
+#test sprintf_1
+char str1[1024] = "";
+char str2[1024] = "";
+char format[50] = "%.d";
+int value = -60;
+
+sprintf(str1, format, value);
+s21_sprintf(str2, format, value);
+ck_assert_int_eq(strcmp(str1, str2), 0);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_3
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%.d";
+int value = 0;
+
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_4
+char str1[1024] = "";
+char str2[1024] = "";
+char format[50] = "%.d";
+int value = 9;
+
+sprintf(str1, format, value);
+s21_sprintf(str2, format, value);
+ck_assert_int_eq(strcmp(str1, str2), 0);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_5
+char str1[1024] = "";
+char str2[1024] = "";
+char format[50] = "%.d";
+int value = +1;
+
+sprintf(str1, format, value);
+s21_sprintf(str2, format, value);
+ck_assert_int_eq(strcmp(str1, str2), 0);
+ck_assert_str_eq(str1, str2);
+
+
+
+#test sprintf_6
+char str1[1024] = "";
+char str2[1024] = "";
+char format[50] = "%.d";
+int value = +5;
+
+sprintf(str1, format, value);
+s21_sprintf(str2, format, value);
+ck_assert_int_eq(strcmp(str1, str2), 0);
+ck_assert_str_eq(str1, str2);
+
+
+#test sprintf_7
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%d";
+int value = 2147483647;
+
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_8
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%d";
+int value = -2147483647;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_9
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%.d";
+int value = '%';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_10
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%d";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_11
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%d";
+int value = 5*5-1;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+
+#test sprintf_d_1_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.d";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+
+#test sprintf_d_1_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.d";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_2_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.d";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_2_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.d";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_2_int_min
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.d";
+int value = -2147483647;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_3_int_min
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5d";
+int value = -2147483647;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_3_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5d";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_3_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5d";
+int value = 'a';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_3_ch1
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5d";
+int value = '%';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_u_1_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.u";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_u_1_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.u";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_u_2_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.u";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_u_2_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.u";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+
+#test sprintf_u_2_int_min
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.u";
+int value = -2147483647;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_u_3_int_min
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5u";
+int value = -2147483647;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_u_3_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5u";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_u_3_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5u";
+int value = 'a';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_u_3_ch1
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5u";
+int value = '%';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_1_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% .d";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+
+#test sprintf_d_space_1_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% .d";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_2_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% -5d";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_2_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% -5d";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_3_int_min
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5d";
+int value = -2147483647;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_3_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% -15.5d";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_3_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% -15.5d";
+int value = 'a';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_3_ch1
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% -15.5d";
+int value = '%';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_3_min_int
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% -15.5d";
+int value = -2147483648;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_w20p_02
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%20d";
+int value = 20;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_d_space_2_int_min
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "% -5d";
+int value = -2147483647;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd_1_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%.hd";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+
+#test sprintf_hd_1_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%.hd";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd_2_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-5hd";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd_2_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-5hd";
+int value = '\0';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd_3__short_int_min
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5hd";
+int value = -32767;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd_3_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5hd";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd_3_ch
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5hd";
+int value = 'a';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd_3_ch1
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-15.5hd";
+int value = '%';
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd_2_int_min
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%-5hd";
+int value = -2147483647;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hd1
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[50] = "It is just an example: %hd";
+short int value = -60;
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_points_1
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%.s";
+char value[100] = "It is just another unit-test!";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_p3s
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%.3s";
+char value[100] = "abcdef";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_150points0s_1
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%150.0s";
+char value[100] = "It is just another unit-test!";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_150points0s_2
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "It is just an example: %150.0s";
+char value[100] = "It is just another unit-test!";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_20points4s_1
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%20.4s";
+char value[100] = "abcd";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_w20s_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%20s";
+char value[100] = "abcd";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_minus_w20s_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%-20s";
+char value[100] = "abcd";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_space_minus_w20s_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "% -20s";
+char value[100] = "abcd";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_space_minus_w2p10s_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "% -2.10s";
+char value[100] = "abcd";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_space_minus_w20p4s_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "% -20.4s";
+char value[100] = "abcdefghijklmno";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_space_minus_w100p4s_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "% -100.4s";
+char value[100] = "abcdefghijklmno";
+ck_assert_int_eq(sprintf(str1, format, value), sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_s_attach
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%s%s";
+
+char value1[100] = "It is just another unit-test!";
+char value2[100] = "an attachment test";
+
+ck_assert_int_eq(sprintf(str1, format, value1, value2), s21_sprintf(str2, format, value1, value2));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_c
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%c";
+char value[100] = "A 68 0 z\0";
+
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_c_w1c
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%1c";
+char value[100] = "A 68 0 z\0";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_c_minus_w50p20c
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+char format[100] = "%-50.20c";
+char value[100] = "A 68 0 z\0";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_i_dec_p0i
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+int value = -60;
+char format[100] = "%.i";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_i_dec_p0i_zero
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+int value = 0;
+char format[100] = "%.i";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_i_dec_minus_w99p0i
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+int value = 5;
+char format[100] = "%-99.0i";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_i_oct_i
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+int value = 07;
+char format[100] = "i";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_i_oct_minus_w150p0i_zero
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+int value = 017777777777;
+char format[100] = "%-150.0i";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_i_hex
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+int value = 0x3fff;
+char format[100] = "%i";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 1.1;
+char format[100] = "%f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_p0f_zero
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 0;
+char format[100] = "%.f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_p0f_zero_zero
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 0.0;
+char format[100] = "%.f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_plus_w15p5f_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 9.0007;
+char format[100] = "%+15.5f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_plus_w15p5f_02
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 5.1*5.8989-1.64738;
+char format[100] = "%+15.5f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_minus_w10p15f
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 5.1;
+char format[100] = "%-10.15f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_minus_w10p15f_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 5.123456789101112131415;
+char format[100] = "%-10.15f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_minus_space_w10p5f_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 5.123456789101112131415;
+char format[100] = "%- 10.5f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_minus_w10p15f_02
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 5.123456789101112131415;
+char format[100] = "%-10.17f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_w10p0f_01
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 5.123456789101112131415;
+char format[100] = "%10.f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_f_w10p0f_02
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+double value = 5;
+char format[100] = "%10.f";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_hd
+char str1[1024] = "";
+char str2[1024] = "";
+int expected_val = 0;
+int value = 5;
+char format[100] = "%hd";
+ck_assert_int_eq(sprintf(str1, format, value), s21_sprintf(str2, format, value));
+ck_assert_int_eq(strcmp(str1, str2), expected_val);
+
+#test sprintf_hu_1_0
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%0.hu";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hu_w20p_01_zero
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%20hu";
+int value = 0;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_hu_w20p_02
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%20hu";
+int value = 20;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test sprintf_perc_01
+char str1[1024] = "";
+char str2[1024] = "";
+int res1;
+int res2;
+char format[50] = "%%";
+int value = 20;
+res1 = sprintf(str1, format, value);
+res2 = s21_sprintf(str2, format, value);
+ck_assert_int_eq(res1, res2);
+ck_assert_str_eq(str1, str2);
+
+#test to_lower_Test_1
+char str1[50] = "HELLO, worlD, 123456!";
+char *str2 = s21_to_lower(str1);
+ck_assert_str_eq("hello, world, 123456!", str2);
+free(str2);
+
+#test to_lower_Test_2
+char str1[50] = "HOW are YOU???";
+char *str2 = s21_to_lower(str1);
+ck_assert_str_eq("how are you???", str2);
+free(str2);
+
+#test to_upper_Test_1
+char str1[1024] = "asd";
+char *str2 = s21_to_upper(str1);
+ck_assert_str_eq(str2, "ASD");
+free(str2);
+
+#test to_upper_Test_2
+char str1[1024] = "asdBGT !!!";
+char *str2 = s21_to_upper(str1);
+ck_assert_str_eq(str2, "ASDBGT !!!");
+free(str2);
